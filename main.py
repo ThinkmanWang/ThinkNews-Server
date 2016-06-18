@@ -4,11 +4,17 @@
 import MySQLdb
 from utils.mysql_python import MysqlPython
 from models.User import User
+from models.RetModel import RetModel
 from utils.user_db_utils import *  
 import json
 from utils.object2json import obj2json
 import hashlib
 import time
+
+from flask import Flask
+from flask import request
+
+app = Flask(__name__)
 
 def main():
     print 'Hello World'  
@@ -43,6 +49,28 @@ def main():
     szToken = ("%s%d" % ("a0a475cf454cf9a06979034098167b9e", int(time.time())))
     print(hashlib.md5(szToken).hexdigest())
     
+@app.route("/")
+def index():
+    return "Server API for ThinkNews!"
+
+@app.route("/login", methods=['POST', 'GET'])
+def login():
+    if (request.method != 'POST'):
+        return obj2json(RetModel(1, "Server support post only"))
+    
+    if (request.form['user_name'] is None or request.form['password'] is None):
+        return obj2json(RetModel(1, "user_name or password is null"))
+    
+    user = user_login(request.form['user_name'], request.form['password'])
+    
+    szRet = ""
+    if (user == None):
+        szRet = obj2json(RetModel(1, "user_name or password is incorrect", {}))
+    else:
+        retModel = RetModel(0, "success", user)
+        szRet = obj2json(retModel)
+            
+    return szRet
     
 if __name__ == '__main__': 
-    main();
+    app.run(host='0.0.0.0', port=8000)

@@ -46,7 +46,7 @@ def get_all_user_from_pool():
     cur.close()
     return lstUser
 
-def login(user_name, password):
+def user_login(user_name, password):
     conn = g_dbPool.connection()
     cur=conn.cursor()    
     cur.execute("select * from view_user where user_name=%s AND password=%s" , (user_name, password))
