@@ -72,6 +72,7 @@ def user_login(user_name, password):
     if (lstUser != None and len(lstUser) >= 1):
         userRet = lstUser[0]
         
+        newToken = ()
         newToken = insert_or_update_token(userRet)
         if (newToken is None):
             return None
