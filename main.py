@@ -16,6 +16,7 @@ from flask import request
 
 app = Flask(__name__)
 
+'''
 def main():
     print 'Hello World'  
     myDB = MysqlPython('thinkman-wang.com', 'thinkman', 'Ab123456', 'db_thinknews')
@@ -48,6 +49,7 @@ def main():
         
     szToken = ("%s%d" % ("a0a475cf454cf9a06979034098167b9e", int(time.time())))
     print(hashlib.md5(szToken).hexdigest())
+'''
     
 @app.route("/", methods=['POST', 'GET'])
 def index():
