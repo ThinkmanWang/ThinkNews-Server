@@ -49,14 +49,14 @@ def main():
     szToken = ("%s%d" % ("a0a475cf454cf9a06979034098167b9e", int(time.time())))
     print(hashlib.md5(szToken).hexdigest())
     
-@app.route("/")
+@app.route("/", methods=['POST', 'GET'])
 def index():
     return "Server API for ThinkNews!"
 
 @app.route("/login", methods=['POST', 'GET'])
 def login():
     if (request.method != 'POST'):
-        return obj2json(RetModel(1, "Server support post only"))
+        return obj2json(RetModel(1, "Server support post only", {}) )
     
     if (request.form['user_name'] is None or request.form['password'] is None):
         return obj2json(RetModel(1, "user_name or password is null"))
@@ -65,7 +65,7 @@ def login():
     
     szRet = ""
     if (user == None):
-        szRet = obj2json(RetModel(1, "user_name or password is incorrect", {}))
+        szRet = obj2json(RetModel(1, "user_name or password is incorrect", {}) )
     else:
         retModel = RetModel(0, "success", user)
         szRet = obj2json(retModel)
