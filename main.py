@@ -21,7 +21,7 @@ from werkzeug import secure_filename
 #app = Flask(__name__) 
 app = Flask(__name__, static_url_path = "/pic", static_folder = "upload")
 app.config['UPLOAD_FOLDER'] = 'upload/'
-app.config['ALLOWED_EXTENSIONS'] = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+app.config['ALLOWED_EXTENSIONS'] = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'TXT', 'PDF', 'PNG', 'JPG', 'JPEG', 'GIF'])
 
 
 '''
