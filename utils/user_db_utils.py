@@ -51,10 +51,10 @@ def get_all_user_from_pool():
 
 def user_login(user_name, password):
     conn = g_dbPool.connection()
-    cur=conn.cursor()    
+    cur=conn.cursor()
     cur.execute("select * from view_user where user_name=%s AND password=%s" , (user_name, password))
     #cur.execute("select * from view_user where user_name=\"18621675203\" AND password=\"a0a475cf454cf9a06979034098167b\"")
-    
+
     rows=cur.fetchall()
     lstUser = []
     for row in rows:
@@ -65,32 +65,32 @@ def user_login(user_name, password):
         user.token = row[3]
         user.create_time = row[4]
         user.expire_time = row[5]
-        lstUser.append(user)    
-        
+        lstUser.append(user)
+
     cur.close()
-    
+
     if (lstUser != None and len(lstUser) >= 1):
         userRet = lstUser[0]
         userRet = insert_or_update_token(userRet)
         return userRet
     else:
         return None
-    
+
 def insert_or_update_token(user):
     conn = g_dbPool.connection()
-    cur=conn.cursor()        
-    cur.execute("select * from token where uid=%s " , user.id)
+    cur=conn.cursor()
+    cur.execute("select * from token where uid=%s " , (user.id,))
     rows=cur.fetchall()
-    
+
     nTime = int(time.time())
     szToken = ("%s%d" % (user.password, nTime))
     szToken = hashlib.md5(szToken).hexdigest()
     if (len(rows) > 0):
-        
+
         count = cur.execute("update token set token=%s, create_time=%s, expire_time=%s where uid=%s" \
                             , (szToken, nTime, nTime + (365*24*3600), user.id))
         conn.commit()
-        
+
         if (1 == count):
             user.token = szToken
             user.create_time = nTime
@@ -102,18 +102,18 @@ def insert_or_update_token(user):
         count = cur.execute("insert into token(uid, token, create_time, expire_time) values (%s, %s, %s, %s) " \
                             , (user.id, szToken, nTime, nTime + (365*24*3600)))
         conn.commit()
-        
+
         if (1 == count):
             user.token = szToken
             user.create_time = nTime
             user.expire_time = nTime + (365*24*3600)
             return user
         else:
-            return None        
-    
-    
+            return None
+
+
 def thinknews_add_favorite():
     szText = "";
-    
+
 
 
