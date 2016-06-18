@@ -71,15 +71,8 @@ def user_login(user_name, password):
     
     if (lstUser != None and len(lstUser) >= 1):
         userRet = lstUser[0]
-        
-        newToken = ()
-        newToken = insert_or_update_token(userRet)
-        if (newToken is None):
-            return None
-        else:
-            userRet.token, userRet.create_time, userRet.expire_time = newToken    
-            return userRet
-        
+        userRet = insert_or_update_token(userRet)
+        return userRet
     else:
         return None
     
@@ -99,7 +92,10 @@ def insert_or_update_token(user):
         conn.commit()
         
         if (1 == count):
-            return szToken, nTime, (nTime + (365*24*3600))
+            user.token = szToken
+            user.create_time = nTime
+            user.expire_time = nTime + (365*24*3600)
+            return user
         else:
             return None
     else:
@@ -108,7 +104,10 @@ def insert_or_update_token(user):
         conn.commit()
         
         if (1 == count):
-            return szToken, nTime, (nTime + (365*24*3600))
+            user.token = szToken
+            user.create_time = nTime
+            user.expire_time = nTime + (365*24*3600)
+            return user
         else:
             return None        
     
