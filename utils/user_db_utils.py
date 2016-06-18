@@ -7,9 +7,12 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'models'))
 
 from mysql_python import MysqlPython
 from models.User import User
+from models.Favorite import Favorite
 
 import MySQLdb
 from DBUtils.PooledDB import PooledDB
+import hashlib
+import time
 
 def get_all_users() :
     myDB = MysqlPython('thinkman-wang.com', 'thinkman', 'Ab123456', 'db_thinknews')
@@ -67,10 +70,50 @@ def user_login(user_name, password):
     cur.close()
     
     if (lstUser != None and len(lstUser) >= 1):
-        return lstUser[0]
+        userRet = lstUser[0]
+        
+        newToken = insert_or_update_token(userRet)
+        if (newToken is None):
+            return None
+        else:
+            userRet.token, userRet.create_time, userRet.expire_time = newToken    
+            return userRet
+        
     else:
         return None
     
+def insert_or_update_token(user):
+    conn = g_dbPool.connection()
+    cur=conn.cursor()        
+    cur.execute("select * from token where uid=%s " , user.id)
+    rows=cur.fetchall()
+    
+    nTime = int(time.time())
+    szToken = ("%s%d" % (user.password, nTime))
+    szToken = hashlib.md5(szToken).hexdigest()
+    if (len(rows) > 0):
+        
+        count = cur.execute("update token set token=%s, create_time=%s, expire_time=%s where uid=%s" \
+                            , (szToken, nTime, nTime + (365*24*3600), user.id))
+        conn.commit()
+        
+        if (1 == count):
+            return szToken, nTime, (nTime + (365*24*3600))
+        else:
+            return None
+    else:
+        count = cur.execute("insert into token(uid, token, create_time, expire_time) values (%s, %s, %s, %s) " \
+                            , (user.id, szToken, nTime, nTime + (365*24*3600)))
+        conn.commit()
+        
+        if (1 == count):
+            return szToken, nTime, (nTime + (365*24*3600))
+        else:
+            return None        
+    
+    
+def thinknews_add_favorite():
+    szText = "";
     
 
 
