@@ -28,7 +28,7 @@ def get_all_users() :
 
     return lstUser
 
-g_dbPool = PooledDB(MySQLdb, 5, host='thinkman-wang.com', user='thinkman', passwd='Ab123456', db='db_thinknews', port=3306);
+g_dbPool = PooledDB(MySQLdb, 5, host='thinkman-wang.com', user='thinkman', passwd='Ab123456', db='db_thinknews', port=3306, charset = "utf8", use_unicode = True);
 
 def get_all_user_from_pool():
     conn = g_dbPool.connection()
@@ -76,6 +76,21 @@ def user_login(user_name, password):
     else:
         return None
 
+def verify_user_token(uid, token):
+    conn = g_dbPool.connection()
+    cur=conn.cursor()
+    cur.execute("select * from token where uid=%s AND token=%s" , (uid, token))    
+    rows=cur.fetchall()
+    
+    if(len(rows) > 0):
+        nTime = int(time.time())
+        count = cur.execute("update token set expire_time=%s where uid=%s" \
+                            , (nTime + (365*24*3600), uid))
+        conn.commit()        
+        return True
+    else:
+        return False
+    
 def insert_or_update_token(user):
     conn = g_dbPool.connection()
     cur=conn.cursor()

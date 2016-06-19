@@ -1,4 +1,5 @@
 class Favorite(object):
+    id = 0
     uid = 0
     ctime = ''
     title = ''
@@ -6,7 +7,8 @@ class Favorite(object):
     picUrl = ""
     url = ""
         
-    def __init__(self, uid=0, ctime="", title="", description="", picUrl="", url=""):
+    def __init__(self, id=0, uid=0, ctime="", title="", description="", picUrl="", url=""):
+        self.id = id
         self.uid = uid
         self.ctime = ctime
         self.title = title
