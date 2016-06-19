@@ -37,8 +37,27 @@ def get_favorite_of_user(uid, nStart, nPageSize):
     cur.close()
     return lstFavorite
 
+def check_if_favorite_exist():
+    conn = g_dbPool.connection(uid, favorite)
+    cur=conn.cursor()
+    cur.execute("select * from favorite where uid=%s and ctime=%s and title=%s and description=%s and picUrl=%s and url=%s", \
+                (uid, favorite.ctime, favorite.title, favorite.description, favorite.picUrl, favorite.url))
+
+    rows=cur.fetchall()
+    rows.close()
+    
+    if (len(rows) > 0):
+        return True
+    else:
+        return False
+
 
 def insert_favorite_for_user(uid, favorite):
+    
+    if (check_if_favorite_exist(uid, favorite)):
+        favorite.uid = uid
+        return favorite 
+    
     conn = g_dbPool.connection()
     cur=conn.cursor()
     
