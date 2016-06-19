@@ -37,41 +37,6 @@ dict_err_code = {
     , 31 : "Get favorite failed"
 }
 
-'''
-def main():
-    print 'Hello World'  
-    myDB = MysqlPython('thinkman-wang.com', 'thinkman', 'Ab123456', 'db_thinknews')
-    
-    szSql = 'select * from user'
-    result = myDB.select_advanced(szSql)
-
-    for obj in result :
-        user = User()
-        user.id, user.user_name, user.password = obj
-        
-        print("%d | %s | %s" % (user.id, user.user_name, user.password))
-    
-    lstUser = get_all_users()
-    for user in lstUser :
-        print("%d | %s | %s" % (user.id, user.user_name, user.password))
-    
-    lstUser = get_all_user_from_pool();
-    for user in lstUser :
-        print("%d | %s | %s" % (user.id, user.user_name, user.password))   
-    
-    print obj2json(lstUser)
-    
-    user = login("18621675203", "a0a475cf454cf9a06979034098167b9e")
-    
-    if (user != None):
-        print obj2json(user)
-    else:
-        print("login failed")
-        
-    szToken = ("%s%d" % ("a0a475cf454cf9a06979034098167b9e", int(time.time())))
-    print(hashlib.md5(szToken).hexdigest())
-'''
-
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
@@ -113,6 +78,9 @@ def upload_file():
     uid = request.form['uid']
     token = request.form["token"]    
     file = request.files['avatar']
+    
+    if (uid is None or token is None):
+        return obj2json(RetModel(21, dict_err_code[21], {}) )     
 
     if (False == verify_user_token(uid, token)):
         return obj2json(RetModel(21, dict_err_code[21], {}) )    
@@ -139,6 +107,9 @@ def add_favorite():
     description = request.form["description"]
     picUrl = request.form["picUrl"]
     url = request.form["url"]
+    
+    if (uid is None or token is None):
+        return obj2json(RetModel(21, dict_err_code[21], {}) )    
     
     if (False == verify_user_token(uid, token)):
         return obj2json(RetModel(21, dict_err_code[21], {}) )
@@ -167,6 +138,9 @@ def get_user_favorite_list():
     token = request.form["token"]    
     nStart = int(request.form["start"])
     nCount = int(request.form["count"])
+    
+    if (uid is None or token is None):
+        return obj2json(RetModel(21, dict_err_code[21], {}) )     
     
     if (False == verify_user_token(uid, token)):
         return obj2json(RetModel(21, dict_err_code[21], {}) )    
